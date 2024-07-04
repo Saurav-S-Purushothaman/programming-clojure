@@ -1,7 +1,9 @@
 (ns programming-clojure.core
+  (:require [programming-clojure.demo :refer [fibinocci-series]])
   (:gen-class))
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "main"
   [& args]
-  (println "Hello, World!"))
+  (println "Created fibinocci series number using function programming style")
+  (println (fibinocci-series 10)))
