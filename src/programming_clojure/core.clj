@@ -4,6 +4,13 @@
   (:gen-class))
 
 
+;; Defining recrod in clojure
+
+(defrecord Person [first-name last-name])
+(def foo (->Person "Saurav" "Sp"))
+(:first-name foo)
+
+
 (defn -main
   "main"
   [& args]

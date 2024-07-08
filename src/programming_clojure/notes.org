@@ -1,0 +1,34 @@
+#+TITLE: Programming Clojure
+
+* Introduction
+
+Notes from programming clojure book. It will be devided into section
+chapter wise. If there is any content that do not fit any chatper, or
+random things, it will be put under section called *General*
+
+* General
+**  Forms
+Forms are unit of code or data that is treated as single enity by the
+Clojure compiler. Forms can be expressions, macros, data structures
+etc.
+
+Clojure code is made up of nested forms. The compiler evaluates these
+forms according to some rules
+
+** Clojure features
+- Lisp code is homoiconoic: i.e, lisp code is lisp data.
+- Clojure generalizes Lisp's physical list into an abstraction called
+  sequence.
+
+#+BEGIN_SRC clojure
+  (defn hello-world [name]
+    (println "Hello " name))
+#+END_SRC
+
+* Random
+** Defining records in clojure
+#+BEGIN_SRC clojure
+  (defrecord Person [first-name last-name])
+  (def foo (->Person "Saurav" "Sp"))
+  (:first-name foo)
+#+END_SRC
