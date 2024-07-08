@@ -11,6 +11,25 @@
 (:first-name foo)
 
 
+;; ref function creates transactionally protected reference.
+(def accounts (ref #{}))
+(defrecord Account [id balance])
+
+;; Updating the state
+(dosync
+ (alter accounts conj (->Account "CLJ" 1000.00)))
+;; dosync causes the update to accounts to execute inside a
+;; transaction which makes it thread safe
+
+;; "hello".getClass().getProtectionDomain()
+(.. "hello" getClass getProtectionDomain)
+
+;; You can put anonymous function inside java's thread object.
+(.start (new Thread (fn [] (println "Hello, World!" (Thread/currentThread)))))
+(.start (Thread. (fn [] (println "Hello, World!" (Thread/currentThread)))))
+
+
+
 (defn -main
   "main"
   [& args]

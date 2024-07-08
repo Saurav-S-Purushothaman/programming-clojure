@@ -15,15 +15,49 @@ etc.
 Clojure code is made up of nested forms. The compiler evaluates these
 forms according to some rules
 
+** Functional programming
+- Properties of functional programming:
+  - Functions are first class object. i.e, functions can be created at
+    runtime, passed around andp returned.
+  - Data is immutable
+  - Functions are pure
+
 ** Clojure features
 - Lisp code is homoiconoic: i.e, lisp code is lisp data.
 - Clojure generalizes Lisp's physical list into an abstraction called
   sequence.
+- Clojure protects mutable state via Software Transactional Memory. STM
+  is a higher level approach to thread safety.
+- You can consdier clojure ref as threa safe, in memory database of its
+  own. For eg:
+- Clojure codes are packaged into libraries and each libraries belong
+  to certain namespace.
 
-#+BEGIN_SRC clojure
-  (defn hello-world [name]
-    (println "Hello " name))
-#+END_SRC
+  #+BEGIN_SRC clojure
+    ;; ref function creates transactionally protected reference.
+    (def accounts (ref #{}))
+    (defrecord Account [id balance])
+
+    ;; Updating the state
+    (dosync
+     (alter accounts conj (->Account "CLJ" 1000.00)))
+    ;; dosync causes the update to accounts to execute inside a
+    ;; transaction which makes it thread safe
+  #+END_SRC
+
+** Java
+Running programs on Java Virtual Machine (JVM) requires assembling a
+classpath that contains all of the code required to run your program,
+which includes Clojure itself, your code, and any Java or Clojure
+dependencies needed by your code.
+
+** Repl
+- Special Variables: The result of evaluating three most recent
+  expressions are stored in special variables *1, *2 and *3.
+- In the repl, if an exception is thrown, the details are often not
+  shown due to brevity reason. But if you still want to see the
+  Exception, you can use the special variable *e. Or you can just print
+  the stack trace using (pst) function
 
 * Random
 ** Defining records in clojure
