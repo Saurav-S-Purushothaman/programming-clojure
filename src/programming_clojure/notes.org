@@ -18,7 +18,7 @@ forms according to some rules
 ** Functional programming
 - Properties of functional programming:
   - Functions are first class object. i.e, functions can be created at
-    runtime, passed around andp returned.
+    runtime, passed around and returned.
   - Data is immutable
   - Functions are pure
 
@@ -66,3 +66,14 @@ dependencies needed by your code.
   (def foo (->Person "Saurav" "Sp"))
   (:first-name foo)
 #+END_SRC
+
+* Exploring Clojure
+- Clojure's runtime evaluates lists as function calls.
+- Symbols are used to name things.
+  - It can name funtions like str, concat
+  - Operators like + (this is actually a function)
+  - Java classes like java.lang.String
+  - Namespaces like clojure.core
+- Vector is sequential indexed collection.
+- Lists are sequential collection stored as linked list.
+- Sets are a good choice for fast addition and removal of element
