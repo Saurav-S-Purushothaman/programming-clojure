@@ -66,6 +66,16 @@ dependencies needed by your code.
   (def foo (->Person "Saurav" "Sp"))
   (:first-name foo)
 #+END_SRC
+** Difference between doto and threading macro .. in interops
+#+BEGIN_SRC clojure
+  (doto "Hello" (.this)(.that))
+  ;; this will return the first object
+  ;; "Hello" with the all the side effect that has taken place
+  ;; on that object.
+  (.. "Hello" getClass getOtherclas)
+  ;; This will return value of the last function.
+#+END_SRC
+
 
 * Exploring Clojure
 - Clojure's runtime evaluates lists as function calls.
