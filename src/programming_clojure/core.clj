@@ -23,6 +23,10 @@
 
 ;; "hello".getClass().getProtectionDomain()
 (.. "hello" getClass getProtectionDomain)
+(doto "Hello"
+  (.getClass)
+  (.getProtectionDomain))
+
 
 ;; You can put anonymous function inside java's thread object.
 (.start (new Thread (fn [] (println "Hello, World!" (Thread/currentThread)))))

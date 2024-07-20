@@ -28,7 +28,7 @@ forms according to some rules
   sequence.
 - Clojure protects mutable state via Software Transactional Memory. STM
   is a higher level approach to thread safety.
-- You can consdier clojure ref as threa safe, in memory database of its
+- You can consdier clojure ref as thread safe, in memory database of its
   own. For eg:
 - Clojure codes are packaged into libraries and each libraries belong
   to certain namespace.
@@ -59,21 +59,25 @@ dependencies needed by your code.
   Exception, you can use the special variable *e. Or you can just print
   the stack trace using (pst) function
 
-* Random
-** Defining records in clojure
+* Code samples
 #+BEGIN_SRC clojure
+  ;; Create a record
   (defrecord Person [first-name last-name])
   (def foo (->Person "Saurav" "Sp"))
   (:first-name foo)
-#+END_SRC
-** Difference between doto and threading macro .. in interops
-#+BEGIN_SRC clojure
+
+  ;; Difference between doto and threading macro .. in interops
   (doto "Hello" (.this)(.that))
   ;; this will return the first object
   ;; "Hello" with the all the side effect that has taken place
   ;; on that object.
   (.. "Hello" getClass getOtherclas)
   ;; This will return value of the last function.
+
+  ;; for list to be evaluated as data
+  (quote (1 2 3))
+  ;; or
+  '( 1 2 3)
 #+END_SRC
 
 
