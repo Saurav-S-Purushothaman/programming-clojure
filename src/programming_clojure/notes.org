@@ -59,7 +59,7 @@ dependencies needed by your code.
   Exception, you can use the special variable *e. Or you can just print
   the stack trace using (pst) function
 
-* Code samples
+** Code samples
 #+BEGIN_SRC clojure
   ;; Create a record
   (defrecord Person [first-name last-name])
@@ -91,3 +91,85 @@ dependencies needed by your code.
 - Vector is sequential indexed collection.
 - Lists are sequential collection stored as linked list.
 - Sets are a good choice for fast addition and removal of element
+- True is ture, false is false and nil is false.
+- Other than false and nil, everything else evaluates to true
+- Empty list is not false in clojure
+- Zero (0) is not false in clojrue
+- (nil? false) -> false
+- (false? nil) -> false ;; false? check if the value is exactly false
+  or not
+** Predicate
+A function that returns true or false
+** defn
+#+BEGIN_SRC clojure
+  (defn name doc-string? attr-map? [params*] prepost-map? body)
+#+END_SRC
+- attr-map? -- associates metadata with function's var
+- prepost-map? -- used to define preconditions and postconditions that are
+automatically checked on invocation
+** Variable arity
+- User ampersand at the end of the name of the variable
+- Clojure binds the name after the ampersand to a sequence of all
+  remaining params
+** Vars, Bindings, and Namespaces
+- A namespace is a collection of names(symbols) that refers to vars.
+- Each var is bound to value
+
+*** Vars
+- When you define an object with *def* or *defn*, that object is
+  stored in clojure var
+
+  For example, \\
+  #+BEGIN_SRC  clojure
+  (def foo 10) ;; -> #'user/foo
+  #+END_SRC
+  The symbol #'user/foo refers to a var that is bound to a value 10 \\
+  Clojure evaluates this symbol by returning the value associated with
+  the var it refers to.
+- The initial value of var is called *root-binding*. Sometimes it's
+  useful to have *thread-local binding* for vars.
+- You can use var to return the var bound to user/foo:
+    #+BEGIN_SRC  clojure
+  (var foo) ;; #'user/foo
+  #+END_SRC
+- There is a reader macro for the above code
+- #'foo - equavlent - (var foor)
+- var can have metadata
+- var can be dynamically rebound on a per-thread basis
+
+*** Bindings
+- Vars a re bound to name. That is also a binding. For example,
+  binding in let
+
+*** Difference between var and binding
+
+A binding is a name for a value within the scope of a function or let:
+#+BEGIN_SRC clojure
+(fn [x] x)
+(let [x 1] x)
+#+END_SRC
+In both examples, x is a (lexical) binding. The binding is immutable,
+you can't modify it. So it's just a name bound to a value and you can
+refer to this name later on in the same scope.
+
+A var however is a globally defined named mutable location.
+
+#+BEGIN_SRC clojure
+(def x 1)
+(alter-var-root #'x inc) ;; x becomes 2
+(defn foo [] 1) ;; foo is a var bound to a function
+(foo) ;; returns 1
+#+END_SRC
+In a REPL you constantly re-define vars, e.g. if we want to modify the
+function foo, we just evaluate again:
+
+#+BEGIN_SRC clojure
+(defn foo [] 2) ;; foo is the same var, but now bound to a new function
+(foo) ;; now returns 2
+#+END_SRC
+
+A dynamic binding only refers to dynamic vars, which are vars, and can
+be mutated using the binding macro. This name might confuse you, since
+it has nothing to do with the bindings in fn or let.
+
+[[https://clojure.org/reference/vars][Clojure - Vars and the Global Environment]]
