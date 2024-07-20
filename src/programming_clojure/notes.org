@@ -32,6 +32,7 @@ forms according to some rules
   own. For eg:
 - Clojure codes are packaged into libraries and each libraries belong
   to certain namespace.
+- Clojure sets can also be function that tests membersnhips
 
   #+BEGIN_SRC clojure
     ;; ref function creates transactionally protected reference.
@@ -43,6 +44,30 @@ forms according to some rules
      (alter accounts conj (->Account "CLJ" 1000.00)))
     ;; dosync causes the update to accounts to execute inside a
     ;; transaction which makes it thread safe
+
+    ;; refer to the current namespace using
+    (ns-name *ns*)
+
+    ;; quoting
+    ;; it means not to find the corresponding var and evaluate the value,
+    ;; just use it as a data
+
+    ;; refer
+    (ns user2)
+    (def hello "Hello")
+    (ns user)
+    (refer 'user2)
+    (refer 'user2 :only ['hello])
+    hello ;; "hello"
+    ;; you don't need to use fully qualified name
+    ;; :exclude and :rename are also available
+    ;; NOTE: rename takes a map not a vector
+
+    ;; instead of
+    (require 'clojure/core)
+    ;; we can use
+    (clojure.core/refer-clojure)
+
   #+END_SRC
 
 ** Java
@@ -80,6 +105,13 @@ dependencies needed by your code.
   '( 1 2 3)
 #+END_SRC
 
+** namespace
+If you want to swtich to other namespace use in-ns function
+By default java.lang package is automatically available.
+To make clojure.core package avaiable
+Execute this code
+(clojure.core/user 'clojure.core)
+
 
 * Exploring Clojure
 - Clojure's runtime evaluates lists as function calls.
@@ -106,7 +138,7 @@ A function that returns true or false
 #+END_SRC
 - attr-map? -- associates metadata with function's var
 - prepost-map? -- used to define preconditions and postconditions that are
-automatically checked on invocation
+  automatically checked on invocation
 ** Variable arity
 - User ampersand at the end of the name of the variable
 - Clojure binds the name after the ampersand to a sequence of all
@@ -173,3 +205,65 @@ be mutated using the binding macro. This name might confuse you, since
 it has nothing to do with the bindings in fn or let.
 
 [[https://clojure.org/reference/vars][Clojure - Vars and the Global Environment]]
+
+*** Storing object with *def* or *defn*
+*(def great-books ["East of Eden" "The Glass Bead Game"])* \\
+This is what clojure does when we evaluate the above code. And this
+process is called *internting a var*
+- Update the current namespace’s map with the association between
+  great-books and the var.
+- Find a free storage shelf.
+- Store ["East of Eden" "The Glass Bead Game"] on the shelf.
+- Write the address of the shelf on the var.
+- Return the var (in this case, #'user/great-books).
+
+*** Ineteract with namespace map of interned var
+- (ns-interns *ns*) ;; returns all the interned vars in the current
+  namespace
+- (ns-map *ns*) ;; this returns the full map that the namespace uses
+  to lookup for vars
+
+
+*** Root binding
+Root binding refers to the initial global binding of a var when it was
+first initialized with *defn* or *def*
+
+** Destructuring
+*** Map destructuring
+Already familiar
+*** Vector desctructuring
+#+BEGIN_SRC clojure
+    (let [[x y] [ 1 2 3]] [x y]) ;; -> [ 1, 2]
+
+    ;; if you want to skip element at start of a colleciton, here's what
+    ;; you could do
+    (let [[ _ _ z] [ 1 2 3]]
+      z)
+    ;; -> 3
+    ;; underscore can be used for saying something that goes along the
+    ;; line like this
+    ;; I don't care about your binding
+
+    ;; also possible to simultaneously bind both collection and element
+
+  (let [[x y :as coordinates] [1 2]]
+      coordinates)
+  ;; -> [1 2]
+#+END_SRC
+
+** Import java classes
+#+BEGIN_SRC clojure
+  ;; (import '(package Class+))
+  (import '(java.io InputStream File))
+#+END_SRC
+
+** Adding metadata
+#+BEGIN_SRC clojure
+  (defn ^{:tag String} should [s] (clojure.string/upper-case s))
+  ;; you can also add metadata to function args
+  (defn ^{:tag String} should
+    [^{:tag String} s] (clojure.string/upper-case s))
+  ;; because tag metadata is so common, you can also use the shortform
+  ;; ^Classname, which expands to ^{:tag Classname}
+  (defn ^String should [^String s] (clojure.string/upper-case s))
+#+END_SRC
