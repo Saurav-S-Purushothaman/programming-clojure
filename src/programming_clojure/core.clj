@@ -28,18 +28,6 @@
   (.getProtectionDomain))
 
 
-;; You can put anonymous function inside java's thread object.
-(.start (new Thread (fn [] (println "Hello, World!" (Thread/currentThread)))))
-(.start (Thread. (fn [] (println "Hello, World!" (Thread/currentThread)))))
-
-(defn dating
-  [person-1 person-2 & three]
-  (str (type three) " and this  is three :" three))
-
-(dating "this" "taht" "with math" 1 3 4)
-
-
-
 (defn -main
   "main"
   [& args]
