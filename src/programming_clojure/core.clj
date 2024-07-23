@@ -22,11 +22,14 @@
 ;; transaction which makes it thread safe
 
 ;; "hello".getClass().getProtectionDomain()
+
 (.. "hello" getClass getProtectionDomain)
 (doto "Hello"
   (.getClass)
   (.getProtectionDomain))
 
+;; a really goofy way to find the length of a function
+(reduce + (map (constantly 1) '(:this :that :with)))
 
 (defn -main
   "main"
