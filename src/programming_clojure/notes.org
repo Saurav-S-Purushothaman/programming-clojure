@@ -187,10 +187,10 @@ refer to this name later on in the same scope.
 A var however is a globally defined named mutable location.
 
 #+BEGIN_SRC clojure
-(def x 1)
-(alter-var-root #'x inc) ;; x becomes 2
-(defn foo [] 1) ;; foo is a var bound to a function
-(foo) ;; returns 1
+  (def x 1)
+  (alter-var-root #'x inc) ;; x becomes 2
+  (defn foo [] 1) ;; foo is a var bound to a function
+  (foo) ;; returns 1
 #+END_SRC
 In a REPL you constantly re-define vars, e.g. if we want to modify the
 function foo, we just evaluate again:
@@ -267,3 +267,98 @@ Already familiar
   ;; ^Classname, which expands to ^{:tag Classname}
   (defn ^String should [^String s] (clojure.string/upper-case s))
 #+END_SRC
+
+
+* Unifying Data with Sequences
+All Datastructures in clojure can be accessed through a single
+abstraction: the sequence (seq)
+
+- What does the phrase sequence are logical list mean?
+  This statement emphasize that sequence provide an conceptial or
+  abstract view of list regardless of the underlying data structure.
+  You can treat various data structures as if they were a list be it
+  list, vector, map or anything.
+- Collecton that can be viewed as a seq are *seqable* collection.
+  - All clojure collections
+  - All java collections
+  - Regular expressions
+  - Directory Structures
+  - I/O streams
+  - XML Tress
+- seq library - a set of function that can be applied to any collectons
+  that are seqable.
+- You can replace many loops that we use in imperative language.
+- Some functinos that are there in the sequence library
+  #+BEGIN_SRC clojure
+    (first coll) (reset coll) (last coll) (cons elem coll) ;; add item
+    infront (seq coll) ;; returns seq of any seqable function ;; returns a
+    type of clojure.lang.PersistentArrayMap$Seq
+
+    ;; Example (def my-map {:this :that :set #{:this :hat} :vec [1 2 2]
+    :list '(1 2 3)}) (seq my-map) ([:this :that] [:set #{:this :hat}]
+    [:vec [1 2 2]] [:list (1 2 3)])
+
+    ;; conj and into -> both of them return the underlying collection type
+    ;; instead of sequence type even though these functions are comming
+    ;; from sequence library functions (conj coll element & elements) ;;
+    ;; adds one or more elements to a collection.  (into to-coll
+    ;; from-coll) ;; adds all item of one collection into another
+
+    ;; Some more functions (range start? end? step?)  (repeat n x) ;;
+    repeats an element x times (iterate f x) (take n sequence) ;; returns
+    a lazy sequence (cycle coll) ;; takes a collection and cycles it
+    ;; infinitely
+    (interleave & coll) ;; takes multiple collections and
+    ;; produces a new colleciton that interleaves a vlaues from each
+    ;; collection until one of the collections is exhausetes
+    (interpose separator coll) ;; similar to interleave but there will
+    ;; be a separator
+
+    ;; some more functions that creates collection. These are also
+    ;; from the sequence library
+    (list & elements)
+    (vec & elements)
+    (hash-set & elements)
+    (hash-map & elements)
+    ;; this is tiny bit different
+    (set coll)
+
+    ;; some more functions
+    (filter pred coll)
+    (take-while pred coll) ;; using filter while taking object from
+    ;; lazy sequence
+    (drop-while pred coll) ;; opposite of take-while
+
+    ;; in a totally unrelated note
+    (complement pred) ;; gives the exact opposite result of pred
+
+    ;; interesting thing
+    ;; set can act as a function that takes looks up value in the set
+    ;; and return true or nil if not found.
+
+    (split-at ele coll) ;; same as meaning
+    (split-with fn coll)
+
+    ;; sequence predicate fun
+    (every? pred coll)
+
+    (some pred coll) ;; notice that some does not ends with ?
+    ;; because some is not actually a predicate
+    ;; some returns the actual value of the first match
+    (some identity [nil false 1 nil 2]) ;; returns 1
+    ;; a common use of some is to perform a linear search to see if a
+    ;; sequence contains a matching element
+    (some #{3} (range 20)) ;; returns  3
+
+    (map f coll) ;; map can also take multiple collection. In that
+    ;; case f must have multiple arguments.
+
+    (reduce f coll) ;; reduce must take a function of two argument
+  #+END_SRC
+- It is interesting to note that sequence library functions return a
+  seq instead of the actual data structure
+- Elements of a set are not in order. If you want order, you can use
+  soreted-set fn and sorted-map fn
+- Most clojure sequences are lazy. They generate elements only when
+  they are actually needed.
+-
