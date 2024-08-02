@@ -290,8 +290,9 @@ abstraction: the sequence (seq)
 - You can replace many loops that we use in imperative language.
 - Some functinos that are there in the sequence library
   #+BEGIN_SRC clojure
-    (first coll) (reset coll) (last coll) (cons elem coll) ;; add item
-    infront (seq coll) ;; returns seq of any seqable function ;; returns a
+    (first coll) (rest coll) (last coll) (cons elem coll) ;; add item
+    ;;infront
+    (seq coll) ;; returns seq of any seqable function ;; returns a
     type of clojure.lang.PersistentArrayMap$Seq
 
     ;; Example (def my-map {:this :that :set #{:this :hat} :vec [1 2 2]
@@ -361,4 +362,50 @@ abstraction: the sequence (seq)
   soreted-set fn and sorted-map fn
 - Most clojure sequences are lazy. They generate elements only when
   they are actually needed.
--
+- List comprehensio generalized to sequence comprehension.
+  #+BEGIN_SRC clojure
+    (for [binding-from coll-expr filter-expr? ..] expr)
+    ;; working with more than one binding-from
+    (for [file "ABDCDE"
+          num "12345"]
+      (format "%c%c" file num))
+    ;; ("A1" "A2" "A3" "A4" "A5" "B1" "B2" "B3" "B4" "B5" "D1" "D2" "D3" "D4" "D5" "C1" "C2" "C3" "C4" "C5" "D1" "D2" "D3" "D4" "D5" "E1" "E2" "E3" "E4" "E5")
+  #+END_SRC
+- Being LAZY
+  - Work with huge dataset that don't fit into memory
+  - Delay I/O until it's absolutely needed
+
+- Making Java Seqable
+  #+BEGIN_SRC clojure
+    ;; String .getBytes returns a byte array
+    (.getBytes "Hello")
+    ;; #object["[B" 0x41d79e6a "[B@41d79e6a"]
+    ;; using Sequeance library functions on ByteArray
+    (first (.getBytes "hello"))
+    ;; 104
+    (cons (int \h) (.getBytes "ello"))
+    ;; (104 101 108 108 111)
+    (type (System/getProperties))
+    (first (System/getProperties))
+    ;; Strings are sequence of character, they also are seqable
+
+    ;; Regular expressions
+    ;; re-sequenc
+    (re-seq #"\w+" "The quick brown fox")
+    ;; ("The" "quick" "brown" "fox")
+#+END_SRC
+
+- *SEQing the file system*
+  - You can seq over file system
+    #+BEGIN_SRC clojure
+       (import 'java.io.File)
+      (.listFiles (File. ".")) ;; this represent an array of files
+      ;; we can seq it
+      (seq (.listFiles (File. ".")))
+      (def my-files (seq (.listFiles (File. "."))))
+      ;; (#object[java.io.File 0x3e87809 "./project.clj"] #object[java.io.File 0x573f802d "./.DS_Store"] #object[java.io.File 0x2fc7c82 "./LICENSE"] #object[java.io.File 0x1f74a82f "./test"] #object[java.io.File 0x5f1cb3f8 "./CHANGELOG.md"] #object[java.io.File 0x74096ede "./target"] #object[java.io.File 0x15f014b1 "./.hgignore"] #object[java.io.File 0x2f7fe3f0 "./resources"] #object[java.io.File 0x15461694 "./.nrepl-port"] #object[java.io.File 0x2a06e57c "./README.md"] #object[java.io.File 0x3f463911 "./.lein-repl-history"] #object[java.io.File 0x6ff62d6a "./.gitignore"] #object[java.io.File 0x4aa164b6 "./doc"] #object[java.io.File 0x5711559b "./.git"] #object[java.io.File 0x591160d9 "./src"])
+      ;; Lets get the name of the files
+      (map #(.getName %) my-files)
+      ;; ("project.clj" ".DS_Store" "LICENSE" "test" "CHANGELOG.md" "target" ".hgignore" "resources" ".nrepl-port" "README.md" ".lein-repl-history" ".gitignore" "doc" ".git" "src")
+      ;; you don't have to call seq on .listFiles here btw.
+    #+END_SRC
