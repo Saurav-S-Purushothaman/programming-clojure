@@ -398,7 +398,7 @@ abstraction: the sequence (seq)
 - *SEQing the file system*
   - You can seq over file system
     #+BEGIN_SRC clojure
-       (import 'java.io.File)
+      (import 'java.io.File)
       (.listFiles (File. ".")) ;; this represent an array of files
       ;; we can seq it
       (seq (.listFiles (File. ".")))
@@ -408,4 +408,31 @@ abstraction: the sequence (seq)
       (map #(.getName %) my-files)
       ;; ("project.clj" ".DS_Store" "LICENSE" "test" "CHANGELOG.md" "target" ".hgignore" "resources" ".nrepl-port" "README.md" ".lein-repl-history" ".gitignore" "doc" ".git" "src")
       ;; you don't have to call seq on .listFiles here btw.
+
+      ;; Recursively travel through the entire directory tree.
+      ;; depth-first walk, file-seqable
+      (count (file-seq (File. ".")))
+      ;; 287
+      ;; Now, lets see only the files that have been changed recently
+      ;; lets give 30 minutes interval
+      (defn minutes->milliseconds
+        "Returns milliseconds of given minute"
+        [mins]
+        (* mins 60 1000))
+
+      (defn recent?
+        "Returns boolean by checking if the given time is less than 30
+        minutes from current time"
+        [time]
+        (> time
+         (- (System/currentTimeMillis) (minutes->milliseconds 30))))
+
+      (defn recently-modified?
+        "Given a file, check if it is recently modified. Return boolean"
+        [file]
+        (recent? (.lastModified file)))
+
+      ;; Now, the code which filters only last modified files
+      (map #(.getName %) (filterv recently-modified? (file-seq (File. "."))))
+      ;; (".git" "objects" "c9" "d80994c11191f1d1264ac8e7204f91813cebf3" "e4" "2ad6d221c7249614359bcf23e5281e86fdd8c3" "87" "5a69cd9d466c17d379356c74bdba29bcbb2688" "15" "b8e30c5538dfb37ccd7506edbd074f12854697" "7f" "332eef5e18695de478d337616b3dbbe29478d7" "HEAD" "main" "main" "heads" "main" "origin" "main" "index" "COMMIT_EDITMSG" "programming_clojure" "notes.org")
     #+END_SRC
