@@ -436,3 +436,19 @@ abstraction: the sequence (seq)
       (map #(.getName %) (filterv recently-modified? (file-seq (File. "."))))
       ;; (".git" "objects" "c9" "d80994c11191f1d1264ac8e7204f91813cebf3" "e4" "2ad6d221c7249614359bcf23e5281e86fdd8c3" "87" "5a69cd9d466c17d379356c74bdba29bcbb2688" "15" "b8e30c5538dfb37ccd7506edbd074f12854697" "7f" "332eef5e18695de478d337616b3dbbe29478d7" "HEAD" "main" "main" "heads" "main" "origin" "main" "index" "COMMIT_EDITMSG" "programming_clojure" "notes.org")
     #+END_SRC
+
+- Seqing streams
+  - A reader provides a stream of characters. You can seq over the
+    lines of any reader using `line-seq`
+  - To get a reader use *clojure.java.io*
+
+    #+BEGIN_SRC clojure
+      (require '[clojure.java.io :as io])
+      ;; leaves reader open...
+      (take 2 (line-seq (io/reader "project.clj")))
+      ;; this is bad code. Reader can represent non memory resources that
+      ;; needs to be closed. Therefore, it should be closed using
+      (with-open [reader (io/reader "project.clj")]
+        (count (line-seq reader)))
+      ;; 10
+    #+END_SRC
