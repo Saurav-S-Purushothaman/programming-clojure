@@ -15,3 +15,11 @@
 (defn is-string-blank?
   [str]
   (every? #(Character/isWhitespace %) str))
+
+
+(def languages #{"java" "c" "d" "clojure"})
+(def beverages #{"java" "chai" "pop"})
+
+
+;; select
+(clojure.set/select #(= 1 (count %)) languages)
