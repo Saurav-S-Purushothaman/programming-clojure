@@ -46,3 +46,27 @@
 ;; If we want nil as a valid value
 (s/valid? string? nil)
 (s/valid? (s/nilable string?) nil)
+
+;; Explain out ot why a value does not conform to a spec.
+
+(s/explain :deck/suit 42)
+(s/explain-str :deck/suit 42)
+
+;; Entity map
+;; Entity maps in spec are defined with keys
+(def email-regex #"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$")
+(s/def ::email-type (s/and string? #(re-matches email-regex %)))
+(s/def ::email ::email-type)
+(s/def ::first-name string?)
+(s/def ::last-name string?)
+
+(s/def ::person (s/keys :req-un [::first-name ::last-name ::email]
+                            :opt-un [::phone]))
+(s/valid? ::person
+          {:first-name "Bugs"
+           :last-name "Bunny"
+           :email "bugs@example.com"})
+
+(s/explain ::person {:first-name "Bugs"
+                     :last-name "Bunny"
+                     :email "bugs@example.com"})
