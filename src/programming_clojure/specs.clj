@@ -70,3 +70,25 @@
 (s/explain ::person {:first-name "Bugs"
                      :last-name "Bunny"
                      :email "bugs@example.com"})
+
+;; Spec can also be used to for records
+;; Especially the unqualified keys
+
+(defrecord Person [first-name last-name email phone])
+
+(s/valid? ::person (->Person "Bugs" nil nil nil))
+(s/explain ::person (->Person "Bugs" nil nil nil))
+
+;; Declaring entity maps in parts
+(s/def :animal/kind string?)
+(s/def :animal/says string?)
+(s/def :animal/common (s/keys :req [:animal/kind :animal/says]))
+(s/def :dog/tail? boolean?)
+(s/def :dog/breed string?)
+(s/def :animal/dog (s/merge :animal/common
+                            (s/keys :req [:dog/tail? :dog/breed])))
+(s/valid? :animal/dog
+          {:animal/kind "dog"
+           :animal/says "woof"
+           :dog/tail? true
+           :dog/breed "retriever"})
